@@ -29,6 +29,7 @@ module RailsSettings
       obj = Rails.cache.read(cache_key)
       if obj == nil
         obj = super(var_name)
+        Rails.cache.write(cache_key, obj)
       end
 
       return @@defaults[var_name.to_s] if obj == nil
