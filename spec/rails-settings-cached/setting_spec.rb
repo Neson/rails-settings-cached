@@ -158,4 +158,31 @@ describe RailsSettings do
       end
     end
   end
+
+  describe '.cache_expire_rate' do
+    it "should work" do
+      Setting.cache_expire_rate 200
+      expect(Setting.class_eval('@@cache_expire_rate')).to eq 200
+      expect(Rails.cache.instance_variable_get(:@data).keys).to be_blank
+    end
+  end
+
+  describe '.expire_cache' do
+    it "should clear all caches" do
+      Setting.foo = 'bar'
+      expect(Rails.cache.instance_variable_get(:@data).keys).not_to be_blank
+      Setting.expire_cache
+      expect(Rails.cache.instance_variable_get(:@data).keys).to be_blank
+    end
+  end
+
+  describe '.reload' do
+    it "should clear all caches" do
+      Setting.foo = 'bar'
+      Setting.bar = :baz
+      expect(Rails.cache.instance_variable_get(:@data).keys).not_to be_blank
+      Setting.reload
+      expect(Rails.cache.instance_variable_get(:@data).keys).to be_blank
+    end
+  end
 end
