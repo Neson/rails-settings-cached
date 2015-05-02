@@ -1,12 +1,19 @@
 module RailsSettings
   class CachedSettings < Settings
     @@cache_expire_rate = 100
-    after_commit :rewrite_cache, on: [:create, :update]
+
+    ActiveSupport::Deprecation.silence do
+      after_commit :rewrite_cache, on: [:create, :update]
+    end
+
     def rewrite_cache
       Rails.cache.write("settings:#{self.var}:#{Time.now.to_i/@@cache_expire_rate}", self.value)
     end
 
-    after_commit :expire_cache, on: [:destroy]
+    ActiveSupport::Deprecation.silence do
+      after_commit :expire_cache, on: [:destroy]
+    end
+
     def expire_cache
       Rails.cache.delete_matched("settings:#{self.var}:*")
     end
